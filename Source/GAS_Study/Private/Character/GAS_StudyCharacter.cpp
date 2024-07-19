@@ -10,6 +10,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "AbilitySystem/GAS_StudyAbilitySystemComponent.h"
+#include "AbilitySystem/GAS_StudyAttributeSet.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -52,6 +54,13 @@ AGAS_StudyCharacter::AGAS_StudyCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	// Create an AbilitySystemComponent & enables replication
+	AbilitySystemComponent = CreateDefaultSubobject<UGAS_StudyAbilitySystemComponent>("AbilitySystemComponent");
+	AbilitySystemComponent->SetIsReplicated(true);
+
+	// Create an AttributeSet
+	AttributeSet = CreateDefaultSubobject<UGAS_StudyAttributeSet>("AttributeSet");
 }
 
 void AGAS_StudyCharacter::BeginPlay()

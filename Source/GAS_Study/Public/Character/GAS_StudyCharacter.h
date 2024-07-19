@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "AttributeSet.h"
 #include "GAS_StudyCharacter.generated.h"
 
 class USpringArmComponent;
@@ -46,7 +47,16 @@ class AGAS_StudyCharacter : public ACharacter
 
 public:
 	AGAS_StudyCharacter();
-	
+
+	UAbilitySystemComponent* GetAbilitySystemComponent() const
+	{
+		return AbilitySystemComponent;
+	}
+
+	UAttributeSet* GetAttributeSet() const
+	{
+		return AttributeSet;
+	}
 
 protected:
 
@@ -63,6 +73,12 @@ protected:
 	
 	// To add mapping context
 	virtual void BeginPlay();
+
+	UPROPERTY()
+	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY()
+	TObjectPtr<UAttributeSet> AttributeSet;
 
 public:
 	/** Returns CameraBoom subobject **/
