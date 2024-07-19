@@ -55,9 +55,10 @@ AGAS_StudyCharacter::AGAS_StudyCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
-	// Create an AbilitySystemComponent & enables replication
+	// Create an AbilitySystemComponent, enable replication on it and set its replication mode
 	AbilitySystemComponent = CreateDefaultSubobject<UGAS_StudyAbilitySystemComponent>("AbilitySystemComponent");
 	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 
 	// Create an AttributeSet
 	AttributeSet = CreateDefaultSubobject<UGAS_StudyAttributeSet>("AttributeSet");
@@ -100,6 +101,22 @@ void AGAS_StudyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
+}
+
+void AGAS_StudyCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	//Init ability actor info for the Server
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+}
+
+void AGAS_StudyCharacter::OnRep_Controller()
+{
+	Super::OnRep_Controller();
+	
+	//Init ability actor info for the Client
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 }
 
 void AGAS_StudyCharacter::Move(const FInputActionValue& Value)

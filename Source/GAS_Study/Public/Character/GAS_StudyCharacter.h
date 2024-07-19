@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "AttributeSet.h"
+#include "AbilitySystemInterface.h"
 #include "GAS_StudyCharacter.generated.h"
 
 class USpringArmComponent;
@@ -17,7 +18,7 @@ struct FInputActionValue;
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
-class AGAS_StudyCharacter : public ACharacter
+class AGAS_StudyCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -48,7 +49,7 @@ class AGAS_StudyCharacter : public ACharacter
 public:
 	AGAS_StudyCharacter();
 
-	UAbilitySystemComponent* GetAbilitySystemComponent() const
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override
 	{
 		return AbilitySystemComponent;
 	}
@@ -58,6 +59,10 @@ public:
 		return AttributeSet;
 	}
 
+	virtual void PossessedBy(AController* NewController) override;
+
+	virtual void OnRep_Controller() override;
+	
 protected:
 
 	/** Called for movement input */
@@ -73,7 +78,7 @@ protected:
 	
 	// To add mapping context
 	virtual void BeginPlay();
-
+	
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
