@@ -61,7 +61,9 @@ public:
 
 	virtual void PossessedBy(AController* NewController) override;
 
-	virtual void OnRep_Controller() override;
+	virtual void OnAcknowledgePossession();
+
+	
 	
 protected:
 

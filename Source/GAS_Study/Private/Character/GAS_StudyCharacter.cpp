@@ -15,8 +15,6 @@
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
-//////////////////////////////////////////////////////////////////////////
-// AGAS_StudyCharacter
 
 AGAS_StudyCharacter::AGAS_StudyCharacter()
 {
@@ -70,9 +68,6 @@ void AGAS_StudyCharacter::BeginPlay()
 	Super::BeginPlay();
 }
 
-//////////////////////////////////////////////////////////////////////////
-// Input
-
 void AGAS_StudyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Add Input Mapping Context
@@ -111,10 +106,8 @@ void AGAS_StudyCharacter::PossessedBy(AController* NewController)
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 }
 
-void AGAS_StudyCharacter::OnRep_Controller()
+void AGAS_StudyCharacter::OnAcknowledgePossession()
 {
-	Super::OnRep_Controller();
-	
 	//Init ability actor info for the Client
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 }
