@@ -11,10 +11,6 @@ UGAS_StudyAttributeSet::UGAS_StudyAttributeSet()
 
 void UGAS_StudyAttributeSet::InitializeAttributeValues()
 {
-	InitMaxHealth(150.f);
-	InitHealth(GetMaxHealth());
-	InitMaxMana(100.f);
-	InitMana(GetMaxMana());
 	
 }
 

@@ -17,14 +17,6 @@ void AGAS_StudyPlayerController::BeginPlay()
 
 	check(GAS_StudyContext);
 	
-	//bShowMouseCursor = true;
-	//DefaultMouseCursor = EMouseCursor::Default;
-
-	//FInputModeGameAndUI InputModeData;
-	//InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-	//InputModeData.SetHideCursorDuringCapture(false);
-	//SetInputMode(InputModeData);
-
 	ControlledPawn = GetPawn<APawn>();
 }
 

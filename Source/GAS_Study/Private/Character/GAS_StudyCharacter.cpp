@@ -68,6 +68,22 @@ void AGAS_StudyCharacter::BeginPlay()
 	Super::BeginPlay();
 }
 
+void AGAS_StudyCharacter::InitializeDefaultAttributes()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	check(IsValid(AbilitySystemComponent));
+	
+	check(DefaultAttributesInitEffect);
+	
+	const FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
+	const FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(DefaultAttributesInitEffect, 1.f, ContextHandle);
+	AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+}
+
 void AGAS_StudyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Add Input Mapping Context
@@ -102,13 +118,16 @@ void AGAS_StudyCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	//Init ability actor info for the Server
+	// Init ability actor info for the Server
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+
+	// Initialize Default Attributes on the Server, will automatically be replicated to the client
+	InitializeDefaultAttributes();
 }
 
 void AGAS_StudyCharacter::OnAcknowledgePossession()
 {
-	//Init ability actor info for the Client
+	// Init ability actor info for the Client
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 }
 

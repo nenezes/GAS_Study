@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "AttributeSet.h"
 #include "AbilitySystemInterface.h"
+#include "GameplayEffect.h"
 #include "GAS_StudyCharacter.generated.h"
 
 class USpringArmComponent;
@@ -73,8 +74,6 @@ protected:
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 			
-
-protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
@@ -87,9 +86,18 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
 
+	// Gameplay effect that determines the character's starting attribute values.
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
+	TSubclassOf<UGameplayEffect> DefaultAttributesInitEffect;
+
+	// Applies DefaultAttributesInitEffect to initialize the character's attributes.
+	UFUNCTION(BlueprintCallable)
+	void InitializeDefaultAttributes();
+	
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 };
