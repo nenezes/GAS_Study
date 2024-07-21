@@ -13,5 +13,7 @@ UCLASS()
 class GAS_STUDY_API UGAS_StudyAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
-	
+
+public:
+	void AddCharacterAbility(const TSubclassOf<UGameplayAbility>& GameplayAbility, int32 AbilityLevel);
 };

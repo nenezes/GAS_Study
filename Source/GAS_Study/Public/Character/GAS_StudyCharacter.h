@@ -46,6 +46,14 @@ class AGAS_StudyCharacter : public ACharacter, public IAbilitySystemInterface
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
+	
+	/** Fire Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* FireAction;
+
+	/** AltFire Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* AltFireAction;
 
 public:
 	AGAS_StudyCharacter();
@@ -63,8 +71,12 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 
 	virtual void OnAcknowledgePossession();
-
 	
+	/** Returns CameraBoom subobject **/
+	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	
+	/** Returns FollowCamera subobject **/
+	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	
 protected:
 
@@ -73,6 +85,12 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
+			
+	/** Called for fire input */
+	void Fire();
+			
+	/** Called for alt fire input */
+	void AltFire();
 			
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -86,19 +104,29 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
 
-	// Gameplay effect that determines the character's starting attribute values.
+	// Gameplay effect that determines the character's starting attribute values
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultAttributesInitEffect;
 
-	// Applies DefaultAttributesInitEffect to initialize the character's attributes.
+	// Applies DefaultAttributesInitEffect to initialize the character's attributes and grants DefaultAbilities' abilities
 	UFUNCTION(BlueprintCallable)
-	void InitializeDefaultAttributes();
+	void InitializeClassDefaults();
+
+	// Tries to active an ability that has a given tag
+	void TryActivateAbilityFromTag(FGameplayTag GameplayTag);
+
+private:
+
+	UPROPERTY(EditAnywhere, Category = "Gameplay Abilities")
+	TSubclassOf<UGameplayAbility> FireAbility;
 	
-public:
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	UPROPERTY(EditAnywhere, Category = "Gameplay Abilities")
+	FGameplayTag FireAbilityTag;
 	
-	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	UPROPERTY(EditAnywhere, Category = "Gameplay Abilities")
+	TSubclassOf<UGameplayAbility> AltFireAbility;
+	
+	UPROPERTY(EditAnywhere, Category = "Gameplay Abilities")
+	FGameplayTag AltFireAbilityTag;
 };
 

@@ -12,6 +12,7 @@
 #include "InputActionValue.h"
 #include "AbilitySystem/GAS_StudyAbilitySystemComponent.h"
 #include "AbilitySystem/GAS_StudyAttributeSet.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -68,7 +69,7 @@ void AGAS_StudyCharacter::BeginPlay()
 	Super::BeginPlay();
 }
 
-void AGAS_StudyCharacter::InitializeDefaultAttributes()
+void AGAS_StudyCharacter::InitializeClassDefaults()
 {
 	if (!HasAuthority())
 	{
@@ -78,10 +79,18 @@ void AGAS_StudyCharacter::InitializeDefaultAttributes()
 	check(IsValid(AbilitySystemComponent));
 	
 	check(DefaultAttributesInitEffect);
-	
+
+	// Apply Default Attributes Gameplay Effect
 	const FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
 	const FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(DefaultAttributesInitEffect, 1.f, ContextHandle);
 	AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+
+	// Grant abilities in list
+	UGAS_StudyAbilitySystemComponent* GAS_StudyASC = CastChecked<UGAS_StudyAbilitySystemComponent>(AbilitySystemComponent);
+	
+	GAS_StudyASC->AddCharacterAbility(FireAbility, 1);
+	
+	GAS_StudyASC->AddCharacterAbility(AltFireAbility, 1);
 }
 
 void AGAS_StudyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -107,6 +116,13 @@ void AGAS_StudyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AGAS_StudyCharacter::Look);
+
+		// Fire
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &AGAS_StudyCharacter::Fire);
+
+		// AltFire
+		EnhancedInputComponent->BindAction(AltFireAction, ETriggerEvent::Triggered, this, &AGAS_StudyCharacter::AltFire);
+
 	}
 	else
 	{
@@ -122,7 +138,7 @@ void AGAS_StudyCharacter::PossessedBy(AController* NewController)
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 
 	// Initialize Default Attributes on the Server, will automatically be replicated to the client
-	InitializeDefaultAttributes();
+	InitializeClassDefaults();
 }
 
 void AGAS_StudyCharacter::OnAcknowledgePossession()
@@ -165,4 +181,31 @@ void AGAS_StudyCharacter::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+void AGAS_StudyCharacter::TryActivateAbilityFromTag(FGameplayTag GameplayTag)
+{
+	TArray<FGameplayAbilitySpec> AbilitySpecs = AbilitySystemComponent->GetActivatableAbilities();
+	
+	for (auto& AbilitySpec : AbilitySpecs)
+	{
+		if (AbilitySpec.Ability->AbilityTags.HasTagExact(GameplayTag) && !AbilitySpec.IsActive())
+		{
+			AbilitySystemComponent->TryActivateAbility(AbilitySpec.Handle);
+		}
+	}
+}
+
+void AGAS_StudyCharacter::Fire()
+{
+	check(IsValid(AbilitySystemComponent));
+
+	TryActivateAbilityFromTag(FireAbilityTag);
+}
+
+void AGAS_StudyCharacter::AltFire()
+{
+	check(IsValid(AbilitySystemComponent));
+	
+	TryActivateAbilityFromTag(AltFireAbilityTag);
 }

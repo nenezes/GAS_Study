@@ -6,12 +6,6 @@
 
 UGAS_StudyAttributeSet::UGAS_StudyAttributeSet()
 {
-	InitializeAttributeValues();
-}
-
-void UGAS_StudyAttributeSet::InitializeAttributeValues()
-{
-	
 }
 
 void UGAS_StudyAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
