@@ -26,7 +26,7 @@ AGAS_StudyCharacter::AGAS_StudyCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
-
+	
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
@@ -67,6 +67,11 @@ void AGAS_StudyCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+}
+
+FVector AGAS_StudyCharacter::GetHandSocketLocation()
+{
+	return GetMesh()->GetSocketLocation(HandSocketName);
 }
 
 void AGAS_StudyCharacter::InitializeClassDefaults()
@@ -118,10 +123,10 @@ void AGAS_StudyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AGAS_StudyCharacter::Look);
 
 		// Fire
-		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &AGAS_StudyCharacter::Fire);
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AGAS_StudyCharacter::Fire);
 
 		// AltFire
-		EnhancedInputComponent->BindAction(AltFireAction, ETriggerEvent::Triggered, this, &AGAS_StudyCharacter::AltFire);
+		EnhancedInputComponent->BindAction(AltFireAction, ETriggerEvent::Started, this, &AGAS_StudyCharacter::AltFire);
 
 	}
 	else
@@ -186,7 +191,8 @@ void AGAS_StudyCharacter::Look(const FInputActionValue& Value)
 void AGAS_StudyCharacter::TryActivateAbilityFromTag(FGameplayTag GameplayTag)
 {
 	TArray<FGameplayAbilitySpec> AbilitySpecs = AbilitySystemComponent->GetActivatableAbilities();
-	
+
+	// Activates ability that is not currently active and contains the exact Gameplay Tag 
 	for (auto& AbilitySpec : AbilitySpecs)
 	{
 		if (AbilitySpec.Ability->AbilityTags.HasTagExact(GameplayTag) && !AbilitySpec.IsActive())

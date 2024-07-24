@@ -5,6 +5,7 @@
 
 #include "Actor/GAS_StudyExplosion.h"
 
+
 void UGAS_StudyExplosionAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                                  const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
                                                  const FGameplayEventData* TriggerEventData)
@@ -25,7 +26,5 @@ void UGAS_StudyExplosionAbility::ActivateAbility(const FGameplayAbilitySpecHandl
 		Cast<APawn>(GetOwningActorFromActorInfo()),
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
-
-	
 	Explosion->FinishSpawning(SpawnTransform);
 }

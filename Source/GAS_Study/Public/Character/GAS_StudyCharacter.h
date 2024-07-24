@@ -72,6 +72,8 @@ public:
 
 	virtual void OnAcknowledgePossession();
 	
+	FVector GetHandSocketLocation();
+	
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	
@@ -104,6 +106,9 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
 
+	UPROPERTY(EditAnywhere, Category = "Sockets")
+	FName HandSocketName;
+	
 	// Gameplay effect that determines the character's starting attribute values
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultAttributesInitEffect;
