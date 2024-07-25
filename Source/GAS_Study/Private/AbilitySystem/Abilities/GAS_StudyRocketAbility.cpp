@@ -19,6 +19,25 @@ void UGAS_StudyRocketAbility::SpawnRocket()
 	AGAS_StudyCharacter* Character = Cast<AGAS_StudyCharacter>(GetAvatarActorFromActorInfo());
 	SpawnTransform.SetLocation(Character->GetHandSocketLocation());
 
+	
+	FHitResult Hit;
+	const APlayerCameraManager* CameraManager = Cast<APlayerController>(Character->GetController())->PlayerCameraManager;
+
+	const FVector StartLocation = CameraManager->GetCameraLocation();
+	const FVector CameraForward = CameraManager->GetCameraRotation().Vector();
+	const FVector EndLocation = StartLocation + CameraForward * FLT_MAX;
+
+	// Try to fire towards an World position, if not able to find one, fire in direction of camera rotation
+	if (GetWorld()->LineTraceSingleByChannel(Hit, StartLocation, EndLocation, ECC_Visibility))
+	{
+		const FRotator Rotation = (Hit.Location - SpawnTransform.GetLocation()).Rotation();
+		SpawnTransform.SetRotation(Rotation.Quaternion());
+	}
+	else
+	{
+		SpawnTransform.SetRotation(CameraManager->GetCameraRotation().Quaternion());
+	}
+	
 	// Spawn actor deferred to set target direction before we finish spawning
 	AGAS_StudyRocketProjectile* RocketProjectile = GetWorld()->SpawnActorDeferred<AGAS_StudyRocketProjectile>(
 		RocketProjectileClass,
@@ -27,7 +46,6 @@ void UGAS_StudyRocketAbility::SpawnRocket()
 		Cast<APawn>(GetOwningActorFromActorInfo()),
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
-	//TODO: Set target direction
 	
 	RocketProjectile->FinishSpawning(SpawnTransform);
 }

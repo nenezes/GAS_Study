@@ -12,4 +12,6 @@ AGAS_StudyGameMode::AGAS_StudyGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+
+	
 }

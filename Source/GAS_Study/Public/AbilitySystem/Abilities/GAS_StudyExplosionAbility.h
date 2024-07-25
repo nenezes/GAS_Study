@@ -16,6 +16,7 @@ class GAS_STUDY_API UGAS_StudyExplosionAbility : public UGAS_StudyGameplayAbilit
 	GENERATED_BODY()
 
 protected:
+	
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 	UPROPERTY(EditDefaultsOnly)
