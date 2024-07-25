@@ -19,7 +19,7 @@ void UGAS_StudyRocketAbility::SpawnRocket()
 	AGAS_StudyCharacter* Character = Cast<AGAS_StudyCharacter>(GetAvatarActorFromActorInfo());
 	SpawnTransform.SetLocation(Character->GetHandSocketLocation());
 
-	
+	// Try to fire towards an World position, if not able to find one, fire in direction of camera rotation
 	FHitResult Hit;
 	const APlayerCameraManager* CameraManager = Cast<APlayerController>(Character->GetController())->PlayerCameraManager;
 
@@ -27,7 +27,6 @@ void UGAS_StudyRocketAbility::SpawnRocket()
 	const FVector CameraForward = CameraManager->GetCameraRotation().Vector();
 	const FVector EndLocation = StartLocation + CameraForward * FLT_MAX;
 
-	// Try to fire towards an World position, if not able to find one, fire in direction of camera rotation
 	if (GetWorld()->LineTraceSingleByChannel(Hit, StartLocation, EndLocation, ECC_Visibility))
 	{
 		const FRotator Rotation = (Hit.Location - SpawnTransform.GetLocation()).Rotation();

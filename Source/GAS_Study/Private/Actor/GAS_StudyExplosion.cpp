@@ -58,4 +58,6 @@ void AGAS_StudyExplosion::OnSphereOverlap(UPrimitiveComponent* OverlappedCompone
 	TargetASC->ApplyGameplayEffectSpecToTarget(*DamageEffectSpec.Data.Get(), TargetASC);
 
 	DamagedTargetASCArray.Add(TargetASC);
+
+	
 }

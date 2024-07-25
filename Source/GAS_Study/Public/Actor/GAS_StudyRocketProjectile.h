@@ -24,18 +24,25 @@ protected:
 	
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditDefaultsOnly)
+	float ExplosionRadius = 500.f;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UGameplayEffect> ExplosionDamageEffect;
+
 	UFUNCTION()
 	void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	                     int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 private:
+
+	void TriggerExplosion();
 	
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USphereComponent> Sphere;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AGAS_StudyExplosion> ExplosionClass;
 	
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
+
+	
 };
