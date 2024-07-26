@@ -63,12 +63,6 @@ AGAS_StudyCharacter::AGAS_StudyCharacter()
 	AttributeSet = CreateDefaultSubobject<UGAS_StudyAttributeSet>("AttributeSet");
 }
 
-void AGAS_StudyCharacter::BeginPlay()
-{
-	// Call the base class  
-	Super::BeginPlay();
-}
-
 FVector AGAS_StudyCharacter::GetHandSocketLocation()
 {
 	return GetMesh()->GetSocketLocation(HandSocketName);

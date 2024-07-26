@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
+#include "NiagaraComponent.h"
 #include "GAS_StudyExplosion.generated.h"
 
 class UGameplayEffect;
@@ -23,21 +24,5 @@ protected:
 	
 	virtual void BeginPlay() override;
 	
-	UFUNCTION()
-	void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-						 int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-private:
-
-	UPROPERTY(EditAnywhere)
-	float ExplosionRadius = 500.f;
-	
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UGameplayEffect> ExplosionDamageEffect;
-	
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<USphereComponent> Sphere;
-
-	UPROPERTY()
-	TArray<TObjectPtr<UAbilitySystemComponent>> DamagedTargetASCArray;
 };

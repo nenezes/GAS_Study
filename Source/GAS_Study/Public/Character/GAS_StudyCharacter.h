@@ -50,7 +50,7 @@ class AGAS_StudyCharacter : public ACharacter, public IAbilitySystemInterface
 	/** Fire Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* FireAction;
-
+	
 	/** AltFire Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* AltFireAction;
@@ -58,20 +58,25 @@ class AGAS_StudyCharacter : public ACharacter, public IAbilitySystemInterface
 public:
 	AGAS_StudyCharacter();
 
+	/** Returns Ability System Component */
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override
 	{
 		return AbilitySystemComponent;
 	}
 
+	/** Returns Attribute Set */
 	UAttributeSet* GetAttributeSet() const
 	{
 		return AttributeSet;
 	}
 
+	/** Called when a controller possesses this character */
 	virtual void PossessedBy(AController* NewController) override;
 
+	/** Called on the client when a controller possesses this character */
 	virtual void OnAcknowledgePossession();
-	
+
+	/** Returns hand socket location */
 	FVector GetHandSocketLocation();
 	
 	/** Returns CameraBoom subobject **/
@@ -82,55 +87,59 @@ public:
 	
 protected:
 
-	/** Called for movement input */
+	/** Called for movement input **/
 	void Move(const FInputActionValue& Value);
 
-	/** Called for looking input */
+	/** Called for looking input **/
 	void Look(const FInputActionValue& Value);
 			
-	/** Called for fire input */
+	/** Called for fire input **/
 	void Fire();
-			
-	/** Called for alt fire input */
+
+	/** Called for alt fire input **/
 	void AltFire();
-			
-	// APawn interface
+
+	/** Adds mapping context and setup action bindings **/
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
-	// To add mapping context
-	virtual void BeginPlay();
-	
+
+	/** Character's ability system component */
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
+	/** Character's attribute set */
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
 
+	/** Character's hand socket name */
 	UPROPERTY(EditAnywhere, Category = "Sockets")
 	FName HandSocketName;
 	
-	// Gameplay effect that determines the character's starting attribute values
+	/** Gameplay effect that determines the character's starting attribute values */
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultAttributesInitEffect;
 
-	// Applies DefaultAttributesInitEffect to initialize the character's attributes and grants DefaultAbilities' abilities
+	/** Applies DefaultAttributesInitEffect to initialize the character's attributes and grants DefaultAbilities' abilities */
 	UFUNCTION(BlueprintCallable)
 	void InitializeClassDefaults();
 
-	// Tries to active an ability that has a given tag
+	/** Tries to active an ability that has a given tag */
 	void TryActivateAbilityFromTag(FGameplayTag GameplayTag);
 
 private:
 
+	/** Character's default Fire ability */
 	UPROPERTY(EditAnywhere, Category = "Gameplay Abilities")
 	TSubclassOf<UGameplayAbility> FireAbility;
-	
+
+	/** Character's Fire ability Gameplay Tag*/
 	UPROPERTY(EditAnywhere, Category = "Gameplay Abilities")
 	FGameplayTag FireAbilityTag;
-	
+
+	/** Character's default AltFire ability */
 	UPROPERTY(EditAnywhere, Category = "Gameplay Abilities")
 	TSubclassOf<UGameplayAbility> AltFireAbility;
-	
+
+	/** Character's AltFire ability Gameplay Tag*/
 	UPROPERTY(EditAnywhere, Category = "Gameplay Abilities")
 	FGameplayTag AltFireAbilityTag;
 };

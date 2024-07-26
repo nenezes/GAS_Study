@@ -3,7 +3,10 @@
 
 #include "AbilitySystem/Abilities/GAS_StudyExplosionAbility.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Actor/GAS_StudyExplosion.h"
+#include "Engine/OverlapResult.h"
 
 
 void UGAS_StudyExplosionAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -17,14 +20,54 @@ void UGAS_StudyExplosionAbility::ActivateAbility(const FGameplayAbilitySpecHandl
 		return;
 	}
 	
-	FTransform SpawnTransform = GetOwningActorFromActorInfo()->GetTransform();
+	TriggerExplosion(ActivationInfo);
+}
 
-	AGAS_StudyExplosion* Explosion = GetWorld()->SpawnActorDeferred<AGAS_StudyExplosion>(
-		ExplosionClass,
-		SpawnTransform,
-		GetOwningActorFromActorInfo(),
-		Cast<APawn>(GetOwningActorFromActorInfo()),
-		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+void UGAS_StudyExplosionAbility::TriggerExplosion(const FGameplayAbilityActivationInfo& ActivationInfo) const
+{
+	const FVector ExplosionLocation = GetOwningActorFromActorInfo()->GetActorLocation();
+	
+	const FCollisionQueryParams SphereColParams(SCENE_QUERY_STAT(ApplyRadialDamage), false, GetOwningActorFromActorInfo());
 
-	Explosion->FinishSpawning(SpawnTransform);
+	TArray<FOverlapResult> OverlapResults;
+	
+	if (const UWorld* World = GEngine->GetWorldFromContextObject(this, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		World->OverlapMultiByObjectType(
+			OverlapResults, ExplosionLocation,
+			FQuat::Identity,
+			FCollisionObjectQueryParams(FCollisionObjectQueryParams::InitType::AllDynamicObjects),
+			FCollisionShape::MakeSphere(ExplosionRadius),
+			SphereColParams);
+	}
+
+	TArray<UAbilitySystemComponent*> DamagedASCArray = TArray<UAbilitySystemComponent*>();
+
+	for (auto& OverlapObject : OverlapResults)
+	{
+		AActor* OverlapActor = OverlapObject.OverlapObjectHandle.FetchActor();
+
+		if (!IsValid(OverlapActor))
+		{
+			continue;
+		}
+		
+		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OverlapActor);
+		
+		if (!IsValid(TargetASC) || DamagedASCArray.Contains(TargetASC))
+		{
+			continue;
+		}
+
+		if (!IsValid(ExplosionDamageEffect))
+		{
+			return;
+		}
+		
+		const FGameplayEffectSpecHandle DamageEffectSpec = TargetASC->MakeOutgoingSpec(
+		ExplosionDamageEffect, 1.f, TargetASC->MakeEffectContext());
+		TargetASC->ApplyGameplayEffectSpecToTarget(*DamageEffectSpec.Data.Get(), TargetASC);
+
+		DamagedASCArray.Add(TargetASC);
+	}
 }

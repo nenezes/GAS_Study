@@ -2,11 +2,8 @@
 
 
 #include "AbilitySystem/GAS_StudyAttributeSet.h"
+#include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"
-
-UGAS_StudyAttributeSet::UGAS_StudyAttributeSet()
-{
-}
 
 void UGAS_StudyAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -16,6 +13,20 @@ void UGAS_StudyAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty
 	DOREPLIFETIME_CONDITION_NOTIFY(UGAS_StudyAttributeSet, MaxHealth, COND_None, REPNOTIFY_OnChanged);
 	DOREPLIFETIME_CONDITION_NOTIFY(UGAS_StudyAttributeSet, Mana, COND_None, REPNOTIFY_OnChanged);
 	DOREPLIFETIME_CONDITION_NOTIFY(UGAS_StudyAttributeSet, MaxMana, COND_None, REPNOTIFY_OnChanged);
+}
+
+void UGAS_StudyAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
+{
+	Super::PostGameplayEffectExecute(Data);
+
+	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
+	{
+		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
+	}
+	if (Data.EvaluatedData.Attribute == GetMaxManaAttribute())
+	{
+		SetMana(FMath::Clamp(GetMana(), 0.f, GetMaxMana()));
+	}
 }
 
 void UGAS_StudyAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const

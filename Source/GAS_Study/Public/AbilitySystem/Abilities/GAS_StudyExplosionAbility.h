@@ -16,9 +16,22 @@ class GAS_STUDY_API UGAS_StudyExplosionAbility : public UGAS_StudyGameplayAbilit
 	GENERATED_BODY()
 
 protected:
-	
+	/** Called when ability is activated */
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+private:
+	/** Only triggered on server */
+	void TriggerExplosion(const FGameplayAbilityActivationInfo& ActivationInfo) const;
+
+	/** Radius of explosion */
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AGAS_StudyExplosion> ExplosionClass;
+	float ExplosionRadius = 500.f;
+
+	/** Explosion damage effect class */
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGameplayEffect> ExplosionDamageEffect;
+
+	/** Array of Ability System Components that were already damaged by the explosion */
+	UPROPERTY()
+	TArray<TObjectPtr<UAbilitySystemComponent>> DamagedTargetASCArray;
 };

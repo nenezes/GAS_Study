@@ -22,10 +22,12 @@ class GAS_STUDY_API UGAS_StudyAttributeSet : public UAttributeSet
 	GENERATED_BODY()
 
 public:
-	UGAS_StudyAttributeSet();
 
-	//Set the conditions in which each attribute is replicated
+	/** Set the conditions in which each attribute is replicated */
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	/** Clamps Health and Mana attributes based on MaxHealth and MaxMana */
+	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 	/*
 	* Attribute declarations
